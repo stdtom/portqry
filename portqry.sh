@@ -6,7 +6,7 @@ test_tcp_connection(){
 	local tport="$2"
 	
     printf '%s:%s\t' "$thost" "$tport" 
-    timeout 5 bash -c "cat < /dev/null > /dev/tcp/$THOST/$TPORT"
+    timeout 5 bash -c "cat < /dev/null > /dev/tcp/$THOST/$TPORT" 2>/dev/null 1>&2
     rcode=$?
 
     case "$rcode" in
