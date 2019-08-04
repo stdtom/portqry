@@ -27,6 +27,49 @@ test_tcp_connection(){
     printf '%s\n' "$result"
 }
 
+validate_port(){
+    local lport="$1"
+
+    # if  lport is integer
+    if [ "$lport" -eq "$lport" ] 2> /dev/null
+    then
+        # if 1 <= lport <= 65536
+        [ $lport -ge 1 -a $lport -le 65535  ]   && return 0
+
+        # if lport < 1
+        [ $lport -lt 1 ]   && return 1
+
+        #if lport > 65535
+        [ "$lport" -gt 65535 ]   && return 1
+    else
+        # if port range
+        if [[ "$lport" == *"-"* ]]
+        then
+            IFS='-'
+            read -r lower upper  <<< "$lport"
+            [ "$lower" -lt "$upper" ]   && return 0
+        fi
+
+#        # if port list
+#        if [[ "$lport" == *","* ]]
+#        then
+#            IFS=','
+#            read -ra elems  <<< "$lport"
+#
+#            ret=0
+#            for el in "${elems[@]}"; do # access each element of array
+#                ret=$(( $ret | validate_port $el))
+#            done
+#        fi
+
+        # if not integer, not port range, and not port list
+        return 1
+    fi
+
+    # should never be reached
+    return 33;
+}
+
 # Run main block only if script has not been sourced
  if [[ "${BASH_SOURCE[0]}" != "${0}" ]] 
  then

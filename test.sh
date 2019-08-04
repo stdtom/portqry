@@ -44,6 +44,26 @@ testUsePortFlag() {
   assertContains "${result}" "127.0.0.1:3"
 }
 
+testValidatePortTable() {
+  while read desc arg want; do
+    got=$(validate_port ${arg})
+    got=$?
+    #assertTrue "${desc}: validate_port() unexpected error; return ${rtrn}" ${rtrn}
+    assertEquals "${desc}: validate_port() = ${got}, want ${want}" "${want}" "${got}" 
+  done <<EOF
+  port=1 1 0
+  port=2 2 0
+  maxPort 65535 0
+  greaterMaxPort 65536 1
+  port=0 0 1
+  portAsString abc 1
+  negativePort -1 1
+  portRange 2-3 0
+  inversPortRange 4-3 1
+  empty "" 1
+EOF
+#  portList 2,3,6 0
+}
 
 oneTimeSetUp() {
   # Load portqry to test.
