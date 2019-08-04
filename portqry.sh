@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 
 test_tcp_connection(){
