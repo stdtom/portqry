@@ -33,6 +33,12 @@ main() {
         THOST=$f1 
         TPORT=$f2 
 
+        # Skip empty lines
+        [[ -z "$THOST" && -z "$TPORT"  ]] && continue
+
+        # Skip comments
+        [[ "$THOST" == "#"* ]] &&  continue
+
         test_tcp_connection "$THOST" "$TPORT" 
     done 
 }
