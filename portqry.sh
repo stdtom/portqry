@@ -36,23 +36,25 @@ else
    . libs/shflags/shflags
 
     DEFINE_integer 'timeout' 5 'Maximum time in seconds to try to establish a connection' 't'
+    DEFINE_string 'port' '80' 'Ports to scan' 'p'
 
     # Parse the command-line.
     FLAGS "$@" || exit 1
     eval set -- "${FLAGS_ARGV}"
 
-    #echo "Timeout: ${FLAGS_timeout}"
-
     while IFS=: read -r f1 f2
     do
-        THOST=$f1 
-        TPORT=$f2 
+        THOST=$f1
+        TPORT=$f2
 
         # Skip empty lines
-        [[ -z "$THOST" && -z "$TPORT"  ]] && continue
+        [[ -z "$THOST" && -z "$TPORT" ]] && continue
 
         # Skip comments
         [[ "$THOST" == "#"* ]] &&  continue
+
+        # If no port specified, use port from command line flag
+        [[  -z "$TPORT" ]] && TPORT=${FLAGS_port}
 
         test_tcp_connection "$THOST" "$TPORT" 
     done 

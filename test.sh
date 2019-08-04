@@ -34,6 +34,16 @@ testTimeoutRejectNonInteger() {
         "0" "${result}"
 }
 
+testUseDefaultPort80() {
+  result=$( (echo "127.0.0.1")|./portqry.sh )
+  assertContains "${result}" "127.0.0.1:80"
+}
+
+testUsePortFlag() {
+  result=$( (echo "127.0.0.1")|./portqry.sh -p 3 )
+  assertContains "${result}" "127.0.0.1:3"
+}
+
 
 oneTimeSetUp() {
   # Load portqry to test.
