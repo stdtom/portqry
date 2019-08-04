@@ -27,7 +27,12 @@ test_tcp_connection(){
     printf '%s\n' "$result"
 }
 
-main() {
+# Run main block only if script has not been sourced
+ if [[ "${BASH_SOURCE[0]}" != "${0}" ]] 
+ then
+     echo "Script ${BASH_SOURCE[0]} loaded ..." 
+else
+
     while IFS=: read -r f1 f2
     do
         THOST=$f1 
@@ -41,8 +46,5 @@ main() {
 
         test_tcp_connection "$THOST" "$TPORT" 
     done 
-}
-
-# Run main only if script has not been sourced
-[[ "${BASH_SOURCE[0]}" != "${0}" ]] && echo "Script ${BASH_SOURCE[0]} loaded ..." || main
+fi
 
