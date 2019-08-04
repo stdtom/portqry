@@ -13,7 +13,7 @@ testSkipCommentLines() {
         x"${result}" "x" 
 }
 
-testLocalhostPor2NotListening() {
+testLocalhostPort2NotListening() {
   result=`(echo "127.0.0.1:2")|./portqry.sh`
 #  assertEquals \
 #        "x127.0.0.1:2    NOT LISTENING" x"${result}" 
