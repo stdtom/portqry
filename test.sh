@@ -14,7 +14,7 @@ testSkipCommentLines() {
 }
 
 testLocalhostPort2NotListening() {
-  result=$((echo "127.0.0.1:2")|./portqry.sh)
+  result=$( (echo "127.0.0.1:2")|./portqry.sh )
 #  assertEquals \
 #        "x127.0.0.1:2    NOT LISTENING" x"${result}" 
   assertContains "${result}" "127.0.0.1:2" 
@@ -22,7 +22,7 @@ testLocalhostPort2NotListening() {
 }
 
 testTimeoutAcceptInteger() {
-  result=$((echo "127.0.0.1:2")|./portqry.sh -t 3)
+  result=$( (echo "127.0.0.1:2")|./portqry.sh -t 3 )
   assertContains "${result}" "127.0.0.1:2"
   assertContains "${result}"  "NOT LISTENING"
 }
