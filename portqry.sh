@@ -27,13 +27,16 @@ test_tcp_connection(){
     printf '%s\n' "$result"
 }
 
+main() {
+    while IFS=: read -r f1 f2
+    do
+        THOST=$f1 
+        TPORT=$f2 
 
-while IFS=: read -r f1 f2
-do
-    THOST=$f1 
-    TPORT=$f2 
+        test_tcp_connection "$THOST" "$TPORT" 
+    done 
+}
 
-    test_tcp_connection "$THOST" "$TPORT" 
-done 
-
+# Run main only if script has not been sourced
+[[ "${BASH_SOURCE[0]}" != "${0}" ]] && echo "Script ${BASH_SOURCE[0]} loaded ..." || main
 
