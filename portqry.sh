@@ -6,7 +6,7 @@ test_tcp_connection(){
 	local tport="$2"
 	
     printf '%s:%s\t' "$thost" "$tport" 
-    timeout ${FLAGS_timeout} bash -c "cat < /dev/null > /dev/tcp/$THOST/$TPORT" 2>/dev/null 1>&2
+    timeout "${FLAGS_timeout}" bash -c "cat < /dev/null > /dev/tcp/$THOST/$TPORT" 2>/dev/null 1>&2
     rcode=$?
 
     case "$rcode" in
@@ -34,10 +34,10 @@ validate_port(){
     if [ "$lport" -eq "$lport" ] 2> /dev/null
     then
         # if 1 <= lport <= 65536
-        [ $lport -ge 1 -a $lport -le 65535  ]   && return 0
+        [ "$lport" -ge 1 -a "$lport" -le 65535 ]   && return 0
 
         # if lport < 1
-        [ $lport -lt 1 ]   && return 1
+        [ "$lport" -lt 1 ]   && return 1
 
         #if lport > 65535
         [ "$lport" -gt 65535 ]   && return 1
