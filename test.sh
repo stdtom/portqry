@@ -49,7 +49,7 @@ testValidatePortTable() {
     got=$(validate_port ${arg})
     got=$?
     #assertTrue "${desc}: validate_port() unexpected error; return ${rtrn}" ${rtrn}
-    assertEquals "${desc}: validate_port() = ${got}, want ${want}" "${want}" "${got}" 
+    assertEquals "${desc}: validate_port(): " "${want}" "${got}"
   done <<EOF
   port=1 1 0
   port=2 2 0
@@ -60,9 +60,11 @@ testValidatePortTable() {
   negativePort -1 1
   portRange 2-3 0
   inversPortRange 4-3 1
+  portList 2,3,6 0
+  invalidPortList 2,xy,6 1
+  portListWithEmptyPort 2,,3,6 1
   empty "" 1
 EOF
-#  portList 2,3,6 0
 }
 
 oneTimeSetUp() {

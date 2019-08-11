@@ -50,17 +50,20 @@ validate_port(){
             [ "$lower" -lt "$upper" ]   && return 0
         fi
 
-#        # if port list
-#        if [[ "$lport" == *","* ]]
-#        then
-#            IFS=','
-#            read -ra elems  <<< "$lport"
-#
-#            ret=0
-#            for el in "${elems[@]}"; do # access each element of array
-#                ret=$(( $ret | validate_port $el))
-#            done
-#        fi
+        # if port list
+        if [[ "$lport" == *","* ]]
+        then
+            IFS=','
+            read -ra elems  <<< "$lport"
+
+            ret=0
+            for el in "${elems[@]}"; do # access each element of array
+                validate_port $el
+                ret=$(( $ret | $?))
+            done
+
+            return ${ret}
+        fi
 
         # if not integer, not port range, and not port list
         return 1
