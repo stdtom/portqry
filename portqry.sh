@@ -58,7 +58,7 @@ validate_port(){
 
             ret=0
             for el in "${elems[@]}"; do # access each element of array
-                validate_port $el
+                validate_port "$el"
                 ret=$(( $ret | $?))
             done
 
