@@ -69,14 +69,11 @@ validate_port(){
         then
             IFS='-'
             read -r lower upper  <<< "$lport"
-            [ "$lower" -lt "$upper" ]   && return 0
-        fi
 
-        # if invalid port range
-        if [[ "$lport" == *"-"* ]]
-        then
-            IFS='-'
-            read -r lower upper  <<< "$lport"
+            # valid port range
+            [ "$lower" -lt "$upper" ]   && return 0
+
+            # invalid port range
             [ "$lower" -gt "$upper" ]   && printf 'Invalid port range: %s\n' "$lport" && return 1
         fi
 
