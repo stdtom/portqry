@@ -37,10 +37,10 @@ validate_port(){
         [ "$lport" -ge 1 -a "$lport" -le 65535 ]   && return 0
 
         # if lport < 1
-        [ "$lport" -lt 1 ]   && return 1
+        [ "$lport" -lt 1 ]   && printf 'Invalid port: %s\n' "$lport" && return 1
 
         #if lport > 65535
-        [ "$lport" -gt 65535 ]   && return 1
+        [ "$lport" -gt 65535 ]   && printf 'Invalid port: %s\n' "$lport" && return 1
     else
         # if port range
         if [[ "$lport" == *"-"* ]]
@@ -48,6 +48,14 @@ validate_port(){
             IFS='-'
             read -r lower upper  <<< "$lport"
             [ "$lower" -lt "$upper" ]   && return 0
+        fi
+
+        # if invalid port range
+        if [[ "$lport" == *"-"* ]]
+        then
+            IFS='-'
+            read -r lower upper  <<< "$lport"
+            [ "$lower" -gt "$upper" ]   && printf 'Invalid port range: %s\n' "$lport" && return 1
         fi
 
         # if port list
@@ -66,6 +74,7 @@ validate_port(){
         fi
 
         # if not integer, not port range, and not port list
+        printf 'Invalid port: %s\n' "$lport"
         return 1
     fi
 
@@ -74,9 +83,9 @@ validate_port(){
 }
 
 # Run main block only if script has not been sourced
- if [[ "${BASH_SOURCE[0]}" != "${0}" ]] 
+ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]
  then
-     echo "Script ${BASH_SOURCE[0]} loaded ..." 
+     echo "Script ${BASH_SOURCE[0]} loaded ..."
 else
    # Source shflags.
    . libs/shflags/shflags
@@ -87,6 +96,7 @@ else
     # Parse the command-line.
     FLAGS "$@" || exit 1
     eval set -- "${FLAGS_ARGV}"
+    validate_port ${FLAGS_port} || exit 1
 
     while IFS=: read -r f1 f2
     do

@@ -46,7 +46,7 @@ testUsePortFlag() {
 
 testValidatePortTable() {
   while read desc arg want; do
-    got=$(validate_port ${arg})
+    output=$(validate_port ${arg})
     got=$?
     #assertTrue "${desc}: validate_port() unexpected error; return ${rtrn}" ${rtrn}
     assertEquals "${desc}: validate_port(): " "${want}" "${got}"
@@ -64,6 +64,25 @@ testValidatePortTable() {
   invalidPortList 2,xy,6 1
   portListWithEmptyPort 2,,3,6 1
   empty "" 1
+EOF
+}
+
+testUsePortFlagTable() {
+  while read desc arg want; do
+    got=$( (echo "127.0.0.1")|./portqry.sh -p ${arg} )
+    assertContains "${desc}: validate_port(): " "${got}" "${want}"
+  done <<EOF
+  port=1 1 127.0.0.1:1
+  port=2 2 127.0.0.1:2
+  maxPort 65535 127.0.0.1:65535
+  greaterMaxPort 65536 Invalid port
+  port=0 0 Invalid port
+  portAsString abc Invalid port
+  negativePort -1 Invalid port
+  inversPortRange 4-3 Invalid port range
+  invalidPortList 2,xy,6 Invalid port
+  portListWithEmptyPort 2,,3,6 Invalid port
+  empty "" Invalid port
 EOF
 }
 
