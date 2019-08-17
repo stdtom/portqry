@@ -5,26 +5,48 @@ test_tcp_connection(){
 	local thost="$1"
 	local tport="$2"
 	
-    printf '%s:%s\t' "$thost" "$tport" 
-    timeout "${FLAGS_timeout}" bash -c "cat < /dev/null > /dev/tcp/$THOST/$TPORT" 2>/dev/null 1>&2
-    rcode=$?
+    if [ "$tport" -eq "$tport" ] 2> /dev/null && [ "$tport" -ge 1 ] && [ "$tport" -le 65535 ]; then
+        printf '%s:%s\t' "$thost" "$tport"
+        timeout "${FLAGS_timeout}" bash -c "cat < /dev/null > /dev/tcp/$THOST/$TPORT" 2>/dev/null 1>&2
+        rcode=$?
 
-    case "$rcode" in
-        0)
-            result="LISTENING"
-            ;;
-        1)
-            result="NOT LISTENING"
-            ;;
-        124)
-            result="FILTERED"
-            ;;
-        *)
-            result="UNKOWN (Return code $rcode not specified)"
-            ;;
-    esac
+        case "$rcode" in
+            0)
+                result="LISTENING"
+                ;;
+            1)
+                result="NOT LISTENING"
+                ;;
+            124)
+                result="FILTERED"
+                ;;
+            *)
+                result="UNKOWN (Return code $rcode not specified)"
+                ;;
+        esac
 
-    printf '%s\n' "$result"
+        printf '%s\n' "$result"
+
+    # if port list
+    elif [[ "$tport" == *","* ]]; then
+        IFS=','
+        read -ra elems  <<< "$tport"
+
+        ret=0
+        for el in "${elems[@]}"; do # access each element of array
+            test_tcp_connection "$thost" "$el"
+        done
+
+    # if port range
+    elif [[ "$tport" == *"-"* ]]; then
+        IFS='-'
+        read -r lower upper  <<< "$tport"
+        [ "$lower" -gt "$upper" ]   && printf 'Invalid port range: %s\n' "$lport" && return 1
+
+        for (( el=lower; el<=upper; el++ )); do
+            test_tcp_connection "$thost" "$el"
+        done
+    fi
 }
 
 validate_port(){
@@ -34,7 +56,7 @@ validate_port(){
     if [ "$lport" -eq "$lport" ] 2> /dev/null
     then
         # if 1 <= lport <= 65536
-	[[ ( "$lport" -ge 1 ) && ( "$lport" -le 65535 ) ]]   && return 0
+        [[ ( "$lport" -ge 1 ) && ( "$lport" -le 65535 ) ]]   && return 0
 
         # if lport < 1
         [ "$lport" -lt 1 ]   && printf 'Invalid port: %s\n' "$lport" && return 1

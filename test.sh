@@ -86,6 +86,21 @@ testUsePortFlagTable() {
 EOF
 }
 
+testUsePortFlagWithRange() {
+  result=$( (echo "127.0.0.1")|./portqry.sh -p 2-4 )
+  assertContains "${result}" "127.0.0.1:2"
+  assertContains "${result}" "127.0.0.1:3"
+  assertContains "${result}" "127.0.0.1:4"
+}
+
+testUsePortFlagWithList() {
+  result=$( (echo "127.0.0.1")|./portqry.sh -p 2,3,6 )
+  assertContains "${result}" "127.0.0.1:2"
+  assertContains "${result}" "127.0.0.1:3"
+  assertContains "${result}" "127.0.0.1:6"
+}
+
+
 oneTimeSetUp() {
   # Load portqry to test.
   . ./portqry.sh
