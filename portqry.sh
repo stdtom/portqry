@@ -34,7 +34,7 @@ validate_port(){
     if [ "$lport" -eq "$lport" ] 2> /dev/null
     then
         # if 1 <= lport <= 65536
-        [ "$lport" -ge 1 -a "$lport" -le 65535 ]   && return 0
+	[[ ( "$lport" -ge 1 ) && ( "$lport" -le 65535 ) ]]   && return 0
 
         # if lport < 1
         [ "$lport" -lt 1 ]   && printf 'Invalid port: %s\n' "$lport" && return 1
@@ -67,7 +67,7 @@ validate_port(){
             ret=0
             for el in "${elems[@]}"; do # access each element of array
                 validate_port "$el"
-                ret=$(( $ret | $?))
+                ret=$(( ret | $?))
             done
 
             return ${ret}
@@ -96,7 +96,7 @@ else
     # Parse the command-line.
     FLAGS "$@" || exit 1
     eval set -- "${FLAGS_ARGV}"
-    validate_port ${FLAGS_port} || exit 1
+    validate_port "${FLAGS_port}" || exit 1
 
     while IFS=: read -r f1 f2
     do
