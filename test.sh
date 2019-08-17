@@ -45,8 +45,8 @@ testUsePortFlag() {
 }
 
 testValidatePortTable() {
-  while read desc arg want; do
-    output=$(validate_port ${arg})
+  while read -r desc arg want; do
+    got=$(validate_port "${arg}")
     got=$?
     #assertTrue "${desc}: validate_port() unexpected error; return ${rtrn}" ${rtrn}
     assertEquals "${desc}: validate_port(): " "${want}" "${got}"
@@ -68,8 +68,8 @@ EOF
 }
 
 testUsePortFlagTable() {
-  while read desc arg want; do
-    got=$( (echo "127.0.0.1")|./portqry.sh -p ${arg} )
+  while read -r desc arg want; do
+    got=$( (echo "127.0.0.1")|./portqry.sh -p "${arg}" )
     assertContains "${desc}: validate_port(): " "${got}" "${want}"
   done <<EOF
   port=1 1 127.0.0.1:1
@@ -109,3 +109,4 @@ oneTimeSetUp() {
 
 # Load and run shUnit2.
 . ./test/libs/shunit2/shunit2
+
