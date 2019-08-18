@@ -100,12 +100,42 @@ testUsePortFlagWithList() {
   assertContains "${result}" "127.0.0.1:6"
 }
 
+testLocalhostListeningPorts() {
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    for p in $localListeningPorts ; do
+      result=$( (echo "127.0.0.1:$p")|./portqry.sh )
+      assertContains "${result}" "127.0.0.1:$p"
+      assertNotContains "${result}"  "NOT LISTENING"
+    done
+  fi
+}
+
+testLocalhostNotListeningPorts() {
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    for p in $localNotListeningPorts ; do
+      result=$( (echo "127.0.0.1:$p")|./portqry.sh )
+      assertContains "${result}" "127.0.0.1:$p"
+      assertContains "${result}"  "NOT LISTENING"
+    done
+  fi
+}
+
 
 oneTimeSetUp() {
   # Load portqry to test.
   . ./portqry.sh
 
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    localListeningPorts=$(netstat -tln4 |awk '/^tcp/ {split($4,a,/:/); if (a[1] ~ /(0\.0\.0\.0|127\.0\.0\.1)/) print a[2]}'|sort -n)
+    localNotListeningPorts=$(for p in {78..85}; do [[ $localListeningPorts =~ $p ]] || echo $p; done|head -n5)
+  #elif [[ "$OSTYPE" == "msys" ]]; then
+    # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
+  fi
+
 }
+
+localListeningPorts=""
+localNotListeningPorts=""
 
 # Load and run shUnit2.
 . ./test/libs/shunit2/shunit2
