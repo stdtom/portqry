@@ -141,7 +141,7 @@ testUsePortFlagWithLocalhostListeningPortRange() {
     assertContains "${result}" "127.0.0.1:$lo"
     assertContains "${result}" "127.0.0.1:$1"
     assertContains "${result}" "127.0.0.1:$hi"
-    assertNotContains "$(echo ${result}|grep '127.0.0.1:$1' )"  "NOT LISTENING"
+    assertNotContains "$(echo "${result}"|grep "127.0.0.1:$1" )"  "NOT LISTENING"
   fi
 }
 
