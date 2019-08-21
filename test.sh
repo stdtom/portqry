@@ -120,13 +120,37 @@ testLocalhostNotListeningPorts() {
   fi
 }
 
+testUsePortFlagWithLocalhostListeningPortList() {
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    portlist=${localListeningPorts// /,}   # Replace ' ' with ','  cf.  https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-Expansion
+    portlist=${portlist%,}
+    result=$( (echo "127.0.0.1")|./portqry.sh -p "$portlist" )
+    for p in $localListeningPorts ; do
+      assertContains "${result}" "127.0.0.1:$p"
+      assertNotContains "${result}"  "NOT LISTENING"
+    done
+  fi
+}
+
+testUsePortFlagWithLocalhostListeningPortRange() {
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    set -- ${localListeningPorts}
+    lo=$(( $1 - 1 ))
+    hi=$(( $1 + 1 ))
+    result=$( (echo "127.0.0.1")|./portqry.sh -p "${lo}-${hi}" )
+    assertContains "${result}" "127.0.0.1:$lo"
+    assertContains "${result}" "127.0.0.1:$1"
+    assertContains "${result}" "127.0.0.1:$hi"
+    assertNotContains "$(echo ${result}|grep '127.0.0.1:$1' )"  "NOT LISTENING"
+  fi
+}
 
 oneTimeSetUp() {
   # Load portqry to test.
   . ./portqry.sh
 
   if [[ "$OSTYPE" == "linux-gnu" ]]; then
-    localListeningPorts=$(netstat -tln4 |awk '/^tcp/ {split($4,a,/:/); if (a[1] ~ /(0\.0\.0\.0|127\.0\.0\.1)/) print a[2]}'|sort -n)
+    localListeningPorts=$(netstat -tln4 |awk '/^tcp/ {split($4,a,/:/); if (a[1] ~ /(0\.0\.0\.0|127\.0\.0\.1)/) print a[2]}'|sort -n |tr '\n' ' ')
     localNotListeningPorts=$(for p in {78..85}; do [[ $localListeningPorts =~ $p ]] || echo $p; done|head -n5)
   #elif [[ "$OSTYPE" == "msys" ]]; then
     # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)

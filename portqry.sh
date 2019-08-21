@@ -7,7 +7,7 @@ test_tcp_connection(){
 	
     if [ "$tport" -eq "$tport" ] 2> /dev/null && [ "$tport" -ge 1 ] && [ "$tport" -le 65535 ]; then
         printf '%s:%s\t' "$thost" "$tport"
-        timeout "${FLAGS_timeout}" bash -c "cat < /dev/null > /dev/tcp/$THOST/$TPORT" 2>/dev/null 1>&2
+        timeout "${FLAGS_timeout}" bash -c "cat < /dev/null > /dev/tcp/$thost/$tport" 2>/dev/null 1>&2
         rcode=$?
 
         case "$rcode" in
