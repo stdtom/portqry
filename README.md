@@ -1,5 +1,10 @@
 # portqry.sh
 
+[![Build Status](https://travis-ci.org/stdtom/portqry.svg?branch=master)](https://travis-ci.org/stdtom/portqry)
+![Codacy grade](https://img.shields.io/codacy/grade/722c43374f1a4be9bb1c3d5d6703886a)
+![GitHub](https://img.shields.io/github/license/stdtom/portqry)
+
+
 portqry.sh is a shell script that you can use to help troubleshoot TCP/IP connectivity issues. portqry.sh runs on Linux-based computers. The script can be used to check the port status of TCP ports on a number of target computers you specify.
 
 ## Installing
