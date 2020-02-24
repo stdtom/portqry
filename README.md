@@ -33,24 +33,19 @@ user@host:~$ echo 140.82.118.3:22 | portqry.sh
 140.82.118.3:22 LISTENING
 ```
 
-
 ## Additional Information
 
 portqry.sh reports one of the following states:
 
-* **LISTENING**
+* LISTENING
 
   A process is listening on the TCP/IP target port specified and portqry.sh receives a response from this process.
-  
-* **NOT LISTENING**
+
+* NOT LISTENING
 
   No process is listening on the TCP/IP target port specified.
 
-* **FILTERED**
+* FILTERED
 
   portqry.sh does not receive a response from the TCP/IP target port specified. The connection times out. The connection to the TCP/IP
   target port is being filtered e.g. by a firewall. A process may or may not be listening on the TCP/IP target port specified.
-  
-  
-  
-  
