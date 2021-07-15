@@ -17,9 +17,28 @@ testLocalhostPort2NotListening() {
   result=$( (echo "127.0.0.1:2")|./portqry.sh )
 #  assertEquals \
 #        "x127.0.0.1:2    NOT LISTENING" x"${result}" 
-  assertContains "${result}" "127.0.0.1:2" 
-  assertContains "${result}"  "NOT LISTENING" 
+  assertContains "${result}" "127.0.0.1:2"
+  assertContains "${result}"  "NOT LISTENING"
 }
+
+testValidateInteger() {
+  while read -r desc arg want; do
+    got=$(validate_integer "${arg}")
+    got=$?
+    #assertTrue "${desc}: validate_integer() unexpected error; return ${rtrn}" ${rtrn}
+    assertEquals "${desc}: validate_integer(): " "${want}" "${got}"
+  done <<EOF
+  int=0 0 0
+  int=1 1 0
+  int=2 2 0
+  maxInt 65535 0
+  greaterMaxInt 65536 1
+  intAsString abc 1
+  negativeInt -1 1
+  empty "" 1
+EOF
+}
+
 
 testTimeoutAcceptInteger() {
   result=$( (echo "127.0.0.1:2")|./portqry.sh -t 3 )
