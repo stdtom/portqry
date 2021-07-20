@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
 
-### TODO
-#if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
-#then
-#    set -eo pipefail  # Exit immediately on error
-#    #set -u            # Exit on unset variables 
-#fi
+# Set error handling only if script has not been sourced
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
+then
+    set -eo pipefail  # Exit immediately on error
+    #set -u            # Exit on unset variables 
+fi
 
 
 #================================================================
@@ -170,23 +170,23 @@ test_tcp_connection(){
 	
     if [ "$tport" -eq "$tport" ] 2> /dev/null && [ "$tport" -ge 1 ] && [ "$tport" -le 65535 ]; then
         printf '%s:%s\t' "$thost" "$tport"
-        timeout "${timeout}" bash -c "cat < /dev/null > /dev/tcp/$thost/$tport" 2>/dev/null 1>&2
-        rcode=$?
+        if timeout "${timeout}" bash -c "cat < /dev/null > /dev/tcp/$thost/$tport" 2>/dev/null 1>&2; then
+            result="LISTENING"
+        else
+            rcode=$?
 
-        case "$rcode" in
-            0)
-                result="LISTENING"
-                ;;
-            1)
-                result="NOT LISTENING"
-                ;;
-            124)
-                result="FILTERED"
-                ;;
-            *)
-                result="UNKOWN (Return code $rcode not specified)"
-                ;;
-        esac
+            case "$rcode" in
+                1)
+                    result="NOT LISTENING"
+                    ;;
+                124)
+                    result="FILTERED"
+                    ;;
+                *)
+                    result="UNKOWN (Return code $rcode not specified)"
+                    ;;
+            esac
+        fi
 
         printf '%s\n' "$result"
 
